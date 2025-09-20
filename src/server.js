@@ -1,10 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import pino from 'pino-http';
+import 'dotenv/config';
 
 const app = express();
-
-
+const PORT = process.env.PORT ?? 3030;
 
 app.use(express.json());
 app.use(cors());
@@ -29,7 +29,8 @@ app.get('/notes', (req, res) => {
 });
 
 app.get('/notes/:noteId', (req, res) => {
-  res.status(200).json({ message: 'Retrieved note with ID: id_param' });
+  const { noteId } = req.params;
+  res.status(200).json({ message: `Retrieved note with ID: ${noteId}` });
 });
 
 app.get('/test-error', (req, res) => {
@@ -44,7 +45,6 @@ app.use((err, req, res, next) => {
   console.error('Error:', err.message);
   res.status(500).json({
     message: 'Simulated server error',
-    error: err.message,
   });
 });
 
