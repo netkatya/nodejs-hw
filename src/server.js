@@ -9,6 +9,7 @@ import { notFoundHandler } from './middleware/notFoundHandler.js';
 
 import notesRoutes from './routes/notesRoutes.js';
 import helmet from 'helmet';
+import { errors } from 'celebrate';
 
 
 const app = express();
@@ -27,6 +28,8 @@ app.get('/test-error', (req, res) => {
 });
 
 app.use(notFoundHandler);
+
+app.use(errors());
 
 app.use(errorHandler);
 
