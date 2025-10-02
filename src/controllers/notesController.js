@@ -1,13 +1,10 @@
 import createHttpError from 'http-errors';
 import { Note } from '../models/note.js';
-import { TAGS } from '../constants/tags.js';
 
 export const getAllNotes = async (req, res) => {
   const { page = 1, perPage = 10, tag, search } = req.query;
 
   const skip = (page - 1) * perPage;
-
-  const notesQuery = Note.find();
 
   const filter = {};
 
@@ -16,21 +13,21 @@ export const getAllNotes = async (req, res) => {
     filter.$or = [{ title: regex }, { content: regex }];
   }
 
-  if (tag && TAGS.includes(tag)) {
-    notesQuery.where("tag").equals(tag);
+  if (tag) {
+    filter.tag = tag;
   }
 
-  const [totalItems, notes] = await Promise.all([
-    notesQuery.clone().countDocuments(),
-    notesQuery.skip(skip).limit(perPage),
+  const [totalNotes, notes] = await Promise.all([
+    Note.countDocuments(filter),
+    Note.find(filter).skip(skip).limit(Number(perPage))
   ]);
 
-  const totalPages = Math.ceil(totalItems / perPage);
+  const totalPages = Math.ceil(totalNotes / perPage);
 
     res.status(200).json({
       page,
       perPage,
-      totalItems,
+      totalNotes,
       totalPages,
       notes,
   });
