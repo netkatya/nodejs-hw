@@ -44,7 +44,7 @@ export const getNoteById = async (req, res, next) => {
 
   const note = await Note.findOne({
     _id: noteId,
-    userId: req.use._id,
+    userId: req.user._id,
   });
 
   if (!note) {
